@@ -1,55 +1,67 @@
-# Extracurricular Manager Frontend
+# CampusConnect – Student Extracurricular Management System
 
-This React application provides a simple UI for managing student extracurricular activities including clubs, events, and students. It uses Material UI for styling and React Router for navigation.
+CampusConnect is a modern React web application built with Create React App and Tailwind CSS.
+It helps students discover, join and manage extracurricular clubs and events through a clean, responsive dashboard interface.
+All data is stored in browser local storage or mocked JSON; there is no backend required.
 
-## Features
+## Core technologies
 
-- Login page with simple authentication flow and role selection (student/admin)
-- Home dashboard showing stats, quick actions, profile and notifications links
-- Clubs management: overview, search/filter stub, details page
-- Event management: overview calendar stub, details page
-- Admin features: event creation/editing and admin dashboard
-- Student profile, notifications, and attendance tracking stubs
-- Role‑based access control using protected routes
-- Responsive UI using Material UI components
+- React (Create React App)
+- Tailwind CSS for styling
+- React Router for navigation
+- Local storage for persistence
+- Context API for shared state (auth, clubs, events, notifications)
 
-## Getting Started
+## Features summary
 
-1. **Install dependencies**
-   ```bash
-   cd frontend
-   npm install
-   ```
+- **Authentication:** login, signup, logout with student/admin roles
+- **Dashboard:** personalized greeting, stats (clubs joined, upcoming events, notifications, badges)
+- **Navigation bar:** Home, Clubs, Events, Notifications, Profile, and a prominent “Create Event” button for admins
+- **Clubs module:** browse/search/filter by category, club detail pages, join/leave, member counts, admin roles
+- **Events module:** list/calendar view, create/edit/delete events (admin), register/unregister for events, full event details
+- **Notifications:** read/unread indicators, mark individual or all read
+- **Profile:** update basic info, upload avatar placeholder, track participation
+- **Reusable components:** Navbar, Sidebar, Card, Button, Modal, FormInput
+- **Responsive design:** mobile-first layout, Tailwind utilities
+- **Mock persistence:** all data persisted in `localStorage` keys
 
-2. **Run locally**
-   ```bash
-   npm start
-   ```
-   The app will open at `http://localhost:3000`.
-   You will be taken to the login page; enter any username/password and choose a role.
-   
-   Once logged in, use the navigation bar or dashboard buttons to visit:
-   - Dashboard
-   - Clubs (overview & details)
-   - Events (overview & details)
-   - Students
-   - Profile
-   - Notifications
-   - Attendance
-   - Admin (visible only when logged in as admin)
+## Getting started
 
-3. **Build for production**
-   ```bash
-   npm run build
-   ```
+```bash
+cd frontend
+npm install
+npm run dev   # or npm start
+```
 
-## Deployment
+Open `http://localhost:3000` in your browser. The first screen is the login/signup form. After logging in you can navigate around the app using the top bar.
 
-The project can be deployed using platforms like Vercel, Netlify, or Render. After building the production bundle, connect your repository and follow the platform-specific instructions. For example, on Vercel:
+## Project structure
 
-- Install the [Vercel CLI](https://vercel.com/docs/cli) or connect via the GitHub integration.
-- Run `vercel` inside the `frontend` directory and follow prompts.
+```
+frontend/
+  node_modules/
+  public/
+  src/
+    components/       # reusable presentational components
+    context/          # React contexts for auth, clubs, events, notifications
+    pages/            # route components (Login, Dashboard, Clubs, Events, etc.)
+    App.js            # router and provider setup
+    index.css         # includes Tailwind directives
+    tailwind.config.js
+    postcss.config.js
+    ...
+```
 
-> **Example deployed link (replace with your own):** `https://extracurricular-manager.vercel.app`
+## Running in development
 
-Feel free to customize the UI and add backend integration as needed.
+- `npm run dev` or `npm start` – start development server
+- `npm run build` – create production build
+- `npm test` – run tests (if added later)
+
+## Notes
+
+- All authentication and data operations are purely client-side and for demo purposes only.
+- You can clear local storage in developer tools if you need to reset the application state.
+- Feel free to extend with backend API calls, more complex validation, and polished UI later.
+
+Enjoy building and customizing CampusConnect!
