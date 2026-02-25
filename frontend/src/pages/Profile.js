@@ -5,15 +5,8 @@ import { useEvents } from '../context/EventsContext';
 
 export default function Profile() {
   const { user, logout } = useAuth();
-  const [file, setFile] = useState(null);
   const { clubs } = useClubs();
   const { events } = useEvents();
-
-  const handlePic = e => {
-    const reader = new FileReader();
-    reader.onload = () => setFile(reader.result);
-    if (e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
-  };
 
   // derive participation lists
   const joined = clubs.filter(c => c.members.includes(user?.name));
