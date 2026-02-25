@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useClubs } from '../context/ClubsContext';
 import { useEvents } from '../context/EventsContext';
