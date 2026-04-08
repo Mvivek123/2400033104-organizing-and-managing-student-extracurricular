@@ -3,19 +3,24 @@ import { Link } from 'react-router-dom';
 
 export default function Sidebar({ open, onClose }) {
   if (!open) return null;
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-30 z-40" onClick={onClose}>
-      <div
-        className="bg-white w-64 h-full p-4"
-        onClick={e => e.stopPropagation()}
-      >
-        <h2 className="font-bold mb-4">Menu</h2>
-        <nav className="flex flex-col space-y-2">
-          <Link to="/">Home</Link>
-          <Link to="/clubs">Clubs</Link>
-          <Link to="/events">Events</Link>
-          <Link to="/notifications">Notifications</Link>
-          <Link to="/profile">Profile</Link>
+    <div className="sidebar-backdrop" onClick={onClose}>
+      <div className="sidebar-drawer" onClick={(e) => e.stopPropagation()}>
+        <div className="sidebar-header">
+          <div>
+            <p className="text-lg font-semibold">CampusConnect</p>
+            <p className="text-sm text-slate-500">Quick navigation</p>
+          </div>
+          <button onClick={onClose} className="close-button" aria-label="Close navigation menu">×</button>
+        </div>
+
+        <nav className="sidebar-nav">
+          <Link to="/" onClick={onClose}>Home</Link>
+          <Link to="/clubs" onClick={onClose}>Clubs</Link>
+          <Link to="/events" onClick={onClose}>Events</Link>
+          <Link to="/notifications" onClick={onClose}>Notifications</Link>
+          <Link to="/profile" onClick={onClose}>Profile</Link>
         </nav>
       </div>
     </div>

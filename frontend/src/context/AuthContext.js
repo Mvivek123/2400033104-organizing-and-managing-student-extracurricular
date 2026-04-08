@@ -1,78 +1,70 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 const AuthContext = createContext();
 
-// localStorage keys and helpers
-const STORAGE_KEY_USERS = 'campusconnect_users';
-const STORAGE_KEY_CURRENT = 'campusconnect_currentUser';
-
-function loadUsers() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY_USERS)) || [];
-  } catch {
-    return [];
-  }
-}
-function saveUsers(users) {
-  localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(users));
-}
-
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
+  const normalizeUser = (rawUser) => {
+    if (!rawUser || typeof rawUser !== 'object') return null;
+
+    const name =
+      (rawUser.name && String(rawUser.name).trim()) ||
+      (rawUser.username && String(rawUser.username).trim()) ||
+      (rawUser.userName && String(rawUser.userName).trim());
+
+    if (!name) return null;
+
+    return {
+      name,
+      username: name,
+      role: String(rawUser.role || 'student').trim().toLowerCase(),
+    };
+  };
+
+  // ✅ Load saved user from localStorage
+  const [user, setUserState] = useState(() => {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY_CURRENT));
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+      return normalizeUser(storedUser);
     } catch {
       return null;
     }
-  }); // user: { name, role }
-  const navigate = useNavigate();
+  });
 
+  // ✅ Keep storage in sync with auth state
   useEffect(() => {
-    if (user) {
-      localStorage.setItem(STORAGE_KEY_CURRENT, JSON.stringify(user));
+    if (user && user.name) {
+      localStorage.setItem('user', JSON.stringify(user));
     } else {
-      localStorage.removeItem(STORAGE_KEY_CURRENT);
+      localStorage.removeItem('user');
     }
   }, [user]);
 
-  const login = (username, password) => {
-    const users = loadUsers();
-    const found = users.find(
-      u => u.username === username && u.password === password
-    );
-    if (found) {
-      setUser({ name: found.username, role: found.role });
-      navigate('/');
-      return true;
-    }
-    return false;
+  // ✅ Exposed setUser normalizer
+  const setUser = (nextUser) => {
+    setUserState(normalizeUser(nextUser));
   };
 
-  const signup = (username, password, role = 'student') => {
-    const users = loadUsers();
-    if (users.find(u => u.username === username)) {
-      return false; // user already exists
-    }
-    users.push({ username, password, role });
-    saveUsers(users);
-    setUser({ name: username, role });
-    navigate('/');
-    return true;
+  // ✅ Login
+  const login = (name) => {
+    const newUser = normalizeUser({ name: name || 'charan', role: 'student' });
+    setUserState(newUser);
+    if (newUser) localStorage.setItem('user', JSON.stringify(newUser));
   };
 
+  // ✅ Logout
   const logout = () => {
-    setUser(null);
-    navigate('/login');
+    setUserState(null);
+    localStorage.removeItem('user');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, setUser, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
+// ✅ Hook
 export function useAuth() {
   return useContext(AuthContext);
 }

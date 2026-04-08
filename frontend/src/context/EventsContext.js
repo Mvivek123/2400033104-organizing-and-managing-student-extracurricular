@@ -1,71 +1,82 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import API from "../services/api";
 
 const EventsContext = createContext();
-const STORAGE_KEY = 'campusconnect_events';
 
 export function EventsProvider({ children }) {
-  const [events, setEvents] = useState(() => {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // ✅ Fetch events function
+  const fetchEvents = async () => {
     try {
-      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      if (stored && stored.length) return stored;
-      // sample events
-      return [
-        {
-          id: 1,
-          title: 'Back to School Fair',
-          description: 'Meet clubs and student organizations.',
-          date: '2026-09-01',
-          time: '10:00',
-          venue: 'Main Quad',
-          organizer: 'Admin',
-          limit: 100,
-          participants: [],
-        },
-      ];
-    } catch {
-      return [];
+      setLoading(true);
+      const res = await API.get("/events"); // calls /api/auth/events
+
+      console.log("✅ Events:", res.data);
+
+      setEvents(res.data);
+      setError("");
+    } catch (err) {
+      console.log("❌ Events Error:", err);
+
+      if (err.response) {
+        setError("Failed to load events");
+      } else {
+        setError("Server not reachable ❌");
+      }
+    } finally {
+      setLoading(false);
     }
-  });
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
-  }, [events]);
-
-  // event: { id, title, description, date, time, venue, organizer, limit, participants: [] }
-  const addEvent = ev => {
-    setEvents(prev => [...prev, ev]);
   };
 
-  const updateEvent = updated => {
-    setEvents(prev => prev.map(e => (e.id === updated.id ? updated : e)));
+  const addEvent = (newEvent) => {
+    setEvents(prev => [...prev, newEvent]);
   };
 
-  const removeEvent = id => {
-    setEvents(prev => prev.filter(e => e.id !== id));
+  const updateEvent = (updatedEvent) => {
+    setEvents(prev => prev.map(ev => (ev.id === updatedEvent.id ? updatedEvent : ev)));
   };
 
   const toggleRegistration = (eventId, username) => {
+    if (!username) return;
+
     setEvents(prev =>
-      prev.map(e => {
-        if (e.id !== eventId) return e;
-        const isRegistered = e.participants.includes(username);
-        const participants = isRegistered
-          ? e.participants.filter(u => u !== username)
-          : [...e.participants, username];
-        return { ...e, participants };
+      prev.map(ev => {
+        if (ev.id !== eventId) return ev;
+
+        const participants = ev.participants || [];
+        const isRegistered = participants.includes(username);
+        return {
+          ...ev,
+          participants: isRegistered
+            ? participants.filter(u => u !== username)
+            : [...participants, username],
+        };
       })
     );
   };
 
+  const removeEvent = (eventId) => {
+    setEvents(prev => prev.filter(ev => ev.id !== eventId));
+  };
+
+  // ✅ Load on page load
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
   return (
-    <EventsContext.Provider
-      value={{ events, addEvent, updateEvent, removeEvent, toggleRegistration }}
-    >
+    <EventsContext.Provider value={{ events, loading, error, fetchEvents, addEvent, updateEvent, toggleRegistration, removeEvent }}>
       {children}
     </EventsContext.Provider>
   );
 }
 
+// ✅ Custom hook
 export function useEvents() {
   return useContext(EventsContext);
 }
+
+export default EventsContext;

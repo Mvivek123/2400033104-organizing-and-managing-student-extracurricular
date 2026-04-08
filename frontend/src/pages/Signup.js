@@ -1,23 +1,56 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 export default function Signup() {
   const auth = useAuth();
   const navigate = useNavigate();
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('student');
   const [error, setError] = useState('');
 
+  // Redirect if already logged in
   useEffect(() => {
     if (auth.user) navigate('/');
   }, [auth.user, navigate]);
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const ok = auth.signup(username, password, role);
-    if (!ok) setError('Username already taken');
+    setError('');
+
+    const payload = {
+      username: username.trim(),
+      password: password.trim(),
+      role: role.trim()
+    };
+
+    console.log("📤 SIGNUP REQUEST:", payload);
+
+    try {
+      // ✅ FIXED HERE (removed /auth)
+      const response = await API.post('/signup', payload);
+
+      console.log("✅ SIGNUP RESPONSE:", response.data);
+
+      alert("Signup successful ✅");
+
+      // redirect to login
+      navigate('/login');
+
+    } catch (err) {
+      console.log("❌ FULL ERROR:", err);
+
+      if (err.response) {
+        setError(err.response.data?.error || "Signup failed");
+      } else if (err.request) {
+        setError("Server not reachable ❌");
+      } else {
+        setError("Something went wrong");
+      }
+    }
   };
 
   return (
@@ -27,7 +60,9 @@ export default function Signup() {
         onSubmit={handleSubmit}
       >
         <h2 className="text-2xl font-bold mb-6 text-center">Create account</h2>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
+
+        {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+
         <div className="mb-4">
           <label className="block mb-1">Username</label>
           <input
@@ -35,9 +70,11 @@ export default function Signup() {
             className="w-full border px-3 py-2 rounded"
             value={username}
             onChange={e => setUsername(e.target.value)}
+            placeholder="Enter username"
             required
           />
         </div>
+
         <div className="mb-4">
           <label className="block mb-1">Password</label>
           <input
@@ -45,9 +82,11 @@ export default function Signup() {
             className="w-full border px-3 py-2 rounded"
             value={password}
             onChange={e => setPassword(e.target.value)}
+            placeholder="Enter password"
             required
           />
         </div>
+
         <div className="mb-4">
           <label className="block mb-1">Role</label>
           <select
@@ -59,12 +98,14 @@ export default function Signup() {
             <option value="admin">Admin</option>
           </select>
         </div>
+
         <button
           type="submit"
           className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition"
         >
           Sign Up
         </button>
+
         <p className="text-sm text-center mt-4">
           Already have an account?{' '}
           <Link to="/login" className="text-indigo-600 hover:underline">

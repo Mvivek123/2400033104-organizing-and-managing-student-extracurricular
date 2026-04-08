@@ -13,8 +13,9 @@ export default function EventDetails() {
   const ev = events.find(e => String(e.id) === id);
   if (!ev) return <p className="p-6">Event not found</p>;
 
-  const isOrganizer = ev.organizer === user?.name;
-  const isRegistered = ev.participants.includes(user?.name);
+  const username = user?.name || user?.username || user?.userName;
+  const isOrganizer = ev.organizer === username;
+  const isRegistered = ev.participants.includes(username);
 
   return (
     <div className="p-6">
@@ -28,7 +29,7 @@ export default function EventDetails() {
       {user && (
         <button
           onClick={() => {
-            toggleRegistration(ev.id, user.name);
+            toggleRegistration(ev.id, username);
             addNotification({
               text: isRegistered
                 ? `You unregistered from ${ev.title}`

@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './App.css';
 
 // pages
 import Login from './pages/Login';
@@ -32,77 +31,92 @@ function App() {
         <ClubsProvider>
           <EventsProvider>
             <NotificationsProvider>
-              <Navbar />
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
+              <div className="min-h-screen bg-slate-50 text-slate-900">
+                <Navbar />
+                <main className="app-main">
+                  <div className="main-container">
+                    <Routes>
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/signup" element={<Signup />} />
 
-                <Route
-                  path="/"
-                  element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  }
-                />
+                      <Route
+                        path="/"
+                        element={
+                          <ProtectedRoute>
+                            <Dashboard />
+                          </ProtectedRoute>
+                        }
+                      />
 
-                <Route
-                  path="/clubs"
-                  element={
-                    <ProtectedRoute>
-                      <Clubs />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/clubs/:id"
-                  element={
-                    <ProtectedRoute>
-                      <ClubDetails />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/events"
-                  element={
-                    <ProtectedRoute>
-                      <Events />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/events/:id"
-                  element={
-                    <ProtectedRoute>
-                      <EventDetails />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/events/create"
-                  element={
-                    <RoleProtectedRoute roles={[ 'admin' ]}>
-                      <CreateEditEvent />
-                    </RoleProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/notifications"
-                  element={
-                    <ProtectedRoute>
-                      <NotificationsPage />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/profile"
-                  element={
-                    <ProtectedRoute>
-                      <Profile />
-                    </ProtectedRoute>
-                  }
-                />
-              </Routes>
+                      <Route
+                        path="/clubs"
+                        element={
+                          <ProtectedRoute>
+                            <Clubs />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/clubs/:id"
+                        element={
+                          <ProtectedRoute>
+                            <ClubDetails />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/events"
+                        element={
+                          <ProtectedRoute>
+                            <Events />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/events/:id"
+                        element={
+                          <ProtectedRoute>
+                            <EventDetails />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/events/create"
+                        element={
+                          <RoleProtectedRoute roles={['admin']}>
+                            <CreateEditEvent />
+                          </RoleProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/notifications"
+                        element={
+                          <ProtectedRoute>
+                            <NotificationsPage />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/profile"
+                        element={
+                          <ProtectedRoute>
+                            <Profile />
+                          </ProtectedRoute>
+                        }
+                      />
+                    </Routes>
+                  </div>
+                </main>
+                <footer className="app-footer">
+                  <div className="main-container flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center">
+                    <p>CampusConnect © 2026. Designed for campus teams, events, and calm workflows.</p>
+                    <div className="footer-links flex flex-wrap gap-4 text-slate-500 text-sm">
+                      <span>Build a better student experience</span>
+                      <span>Clear navigation • Responsive UI • Accessible forms</span>
+                    </div>
+                  </div>
+                </footer>
+              </div>
             </NotificationsProvider>
           </EventsProvider>
         </ClubsProvider>
