@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import API from '../services/api';
@@ -18,7 +18,7 @@ export default function Login() {
     return Array.from({ length: 5 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
   };
 
-  // ✅ Redirect if already logged in
+ 
   useEffect(() => {
     if (auth.user) {
       navigate('/');
@@ -48,20 +48,20 @@ export default function Login() {
     console.log("📤 REQUEST:", payload);
 
     try {
-      // ✅ IMPORTANT: correct endpoint
+       
       const response = await API.post('/login', payload);
 
       console.log("✅ RESPONSE:", response.data);
 
-      // ✅ Proper validation
+       
       if (response.status === 200 && response.data?.user) {
 
-        // Save user in context
+         
         auth.setUser(response.data.user);
 
         alert("Login success ✅");
 
-        navigate('/'); // redirect to home
+        navigate('/');  
 
       } else {
         setError("Login failed");
@@ -70,15 +70,15 @@ export default function Login() {
     } catch (err) {
       console.log("❌ ERROR:", err);
 
-      // ✅ Better error handling
+       
       if (err.response) {
-        // Backend responded
+        
         setError(err.response.data?.error || "Invalid credentials");
       } else if (err.request) {
-        // Request sent but no response
+        
         setError("Server not reachable ❌");
       } else {
-        // Other error
+        
         setError("Something went wrong");
       }
     }
